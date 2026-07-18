@@ -3,34 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vi SIM Explorer - Home</title>
+    <title>My Own SIM Lab - Home</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #f4f6f9; color: #333; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .container { max-width: 450px; width: 100%; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); text-align: center; }
-        h1 { color: #e30613; margin-bottom: 10px; font-size: 26px; }
-        p { color: #666; margin-bottom: 25px; font-size: 14px; }
-        .sim-visual { background: linear-gradient(135deg, #e30613, #9e040c); color: white; padding: 30px; border-radius: 15px; margin-bottom: 30px; position: relative; text-align: left; box-shadow: 0 5px 15px rgba(227, 6, 19, 0.3); }
-        .chip { width: 45px; height: 35px; background: #ffd700; border-radius: 6px; margin-bottom: 20px; border: 1px solid #e5c100; }
-        .brand { font-size: 22px; font-weight: bold; letter-spacing: 1px; }
-        .btn { display: inline-block; width: 100%; background: #222; color: white; text-decoration: none; padding: 14px; border-radius: 10px; font-weight: bold; font-size: 16px; transition: 0.3s; }
-        .btn:hover { background: #e30613; }
+        body { background-color: #f0f4f8; color: #2d3748; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .container { max-width: 450px; width: 100%; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; border: 2px solid #cbd5e1; }
+        h1 { color: #2563eb; margin-bottom: 10px; font-size: 28px; font-weight: 800; }
+        p { color: #64748b; margin-bottom: 25px; font-size: 14px; }
+        .sim-visual { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; padding: 35px; border-radius: 15px; margin-bottom: 30px; position: relative; text-align: left; box-shadow: 0 8px 20px rgba(37, 99, 235, 0.2); }
+        .chip { width: 45px; height: 35px; background: #ffd700; border-radius: 6px; margin-bottom: 20px; border: 1px solid #e5c100; position: relative; }
+        .chip::after { content: ''; position: absolute; width: 100%; height: 2px; background: rgba(0,0,0,0.1); top: 50%; }
+        .brand { font-size: 24px; font-weight: bold; letter-spacing: 1.5px; text-transform: uppercase; }
+        .btn { display: inline-block; width: 100%; background: #0f172a; color: white; text-decoration: none; padding: 14px; border-radius: 10px; font-weight: bold; font-size: 16px; transition: 0.3s; }
+        .btn:hover { background: #2563eb; transform: translateY(-2px); }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Vi SIM Project</h1>
-    <p>Apne phone se SIM card data aur analysis ko monitor karein.</p>
+    <h1>Our SIM Venture</h1>
+    <p>Welcome to our custom SIM manufacturing & tech project.</p>
     
     <div class="sim-visual">
         <div class="chip"></div>
-        <div class="brand">Vi India</div>
-        <div style="font-size: 11px; margin-top: 15px; opacity: 0.8;">STATUS: READY TO SCAN</div>
+        <div class="brand">OWN Network</div>
+        <div style="font-size: 11px; margin-top: 15px; opacity: 0.9; font-weight: bold;">PROJECT STATE: IN-HOUSE BETA</div>
     </div>
 
-    <!-- Yeh button watch.html wale page par le jayega -->
-    <a href="watch.html" class="btn">Live Monitor Shuru Karein</a>
+    <a href="watch.html" class="btn">Launch Project Terminal</a>
 </div>
 
 </body>
