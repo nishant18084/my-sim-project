@@ -1,37 +1,91 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Own SIM Lab - Home</title>
+    <title>OWN_CORE_NET Terminal</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #f0f4f8; color: #2d3748; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .container { max-width: 450px; width: 100%; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; border: 2px solid #cbd5e1; }
-        h1 { color: #2563eb; margin-bottom: 10px; font-size: 28px; font-weight: 800; }
-        p { color: #64748b; margin-bottom: 25px; font-size: 14px; }
-        .sim-visual { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; padding: 35px; border-radius: 15px; margin-bottom: 30px; position: relative; text-align: left; box-shadow: 0 8px 20px rgba(37, 99, 235, 0.2); }
-        .chip { width: 45px; height: 35px; background: #ffd700; border-radius: 6px; margin-bottom: 20px; border: 1px solid #e5c100; position: relative; }
-        .chip::after { content: ''; position: absolute; width: 100%; height: 2px; background: rgba(0,0,0,0.1); top: 50%; }
-        .brand { font-size: 24px; font-weight: bold; letter-spacing: 1.5px; text-transform: uppercase; }
-        .btn { display: inline-block; width: 100%; background: #0f172a; color: white; text-decoration: none; padding: 14px; border-radius: 10px; font-weight: bold; font-size: 16px; transition: 0.3s; }
-        .btn:hover { background: #2563eb; transform: translateY(-2px); }
+        body {
+            background-color: #0d0d0d;
+            color: #00ff00;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 20px;
+            margin: 0;
+            overflow: hidden;
+        }
+        .terminal {
+            border: 1px solid #00ff00;
+            padding: 15px;
+            background-color: #000;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+            height: 80vh;
+            overflow-y: auto;
+        }
+        .status-bar {
+            border-bottom: 1px solid #00ff00;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9em;
+        }
+        .log-entry {
+            margin: 5px 0;
+            font-size: 0.85em;
+            line-height: 1.4;
+        }
+        .highlight { color: #ffffff; font-weight: bold; }
+        .warn { color: #ffcc00; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>Our SIM Venture</h1>
-    <p>Welcome to our custom SIM manufacturing & tech project.</p>
-    
-    <div class="sim-visual">
-        <div class="chip"></div>
-        <div class="brand">OWN Network</div>
-        <div style="font-size: 11px; margin-top: 15px; opacity: 0.9; font-weight: bold;">PROJECT STATE: IN-HOUSE BETA</div>
+<div class="terminal">
+    <div class="status-bar">
+        <div>SYS_MODE: <span class="highlight">EXT_SIM_TEST</span></div>
+        <div>NET_MASK: <span class="highlight">OWN_CORE_NET</span></div>
     </div>
-
-    <a href="watch.html" class="btn">Launch Project Terminal</a>
+    
+    <div id="log-container">
+        <div class="log-entry">[INFO] System booted. Awaiting hardware injection...</div>
+    </div>
 </div>
+
+<script>
+    const logs = [
+        "[OK] Physical SIM slot change detected.",
+        "[WARN] Operator network handshake: FAILED (SIM Deactivated)",
+        "[INFO] Initializing custom project override protocol...",
+        "[OK] Stripping original carrier signatures...",
+        "[INFO] Injecting interface: OWN_CORE_NET [v1.0.4]",
+        "[OK] Socket connection power state: STABLE",
+        "[INFO] Masking network link under anonymous gateway...",
+        "[SUCCESS] Hardware interface masked successfully. System running in Sandbox Mode."
+    ];
+
+    let currentLog = 0;
+    const container = document.getElementById('log-container');
+
+    function printLog() {
+        if (currentLog < logs.length) {
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            
+            // Add custom colors based on keywords
+            if(logs[currentLog].includes('[WARN]')) entry.className += ' warn';
+            if(logs[currentLog].includes('[SUCCESS]')) entry.className += ' highlight';
+            
+            entry.innerHTML = logs[currentLog];
+            container.appendChild(entry);
+            container.scrollTop = container.scrollHeight;
+            currentLog++;
+            setTimeout(printLog, 1500); // 1.5 seconds delay per log
+        }
+    }
+
+    // Simulate SIM insert detection after 2 seconds
+    setTimeout(printLog, 2000);
+</script>
 
 </body>
 </html>
