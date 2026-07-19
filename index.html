@@ -18,7 +18,7 @@
             padding: 15px;
             background-color: #000;
             box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
-            height: 80vh;
+            height: 85vh;
             overflow-y: auto;
         }
         .status-bar {
@@ -35,32 +35,32 @@
             line-height: 1.4;
         }
         .highlight { color: #ffffff; font-weight: bold; }
-        .warn { color: #ffcc00; }
+        .blue { color: #33ccff; }
     </style>
 </head>
 <body>
 
 <div class="terminal">
     <div class="status-bar">
-        <div>SYS_MODE: <span class="highlight">EXT_SIM_TEST</span></div>
+        <div>SYS_MODE: <span class="highlight">ACTIVE_SIM_LINK</span></div>
         <div>NET_MASK: <span class="highlight">OWN_CORE_NET</span></div>
     </div>
     
     <div id="log-container">
-        <div class="log-entry">[INFO] System booted. Awaiting hardware injection...</div>
+        <div class="log-entry">[INFO] Booting custom interface engine...</div>
     </div>
 </div>
 
 <script>
     const logs = [
-        "[OK] Physical SIM slot change detected.",
-        "[WARN] Operator network handshake: FAILED (SIM Deactivated)",
-        "[INFO] Initializing custom project override protocol...",
-        "[OK] Stripping original carrier signatures...",
-        "[INFO] Injecting interface: OWN_CORE_NET [v1.0.4]",
-        "[OK] Socket connection power state: STABLE",
-        "[INFO] Masking network link under anonymous gateway...",
-        "[SUCCESS] Hardware interface masked successfully. System running in Sandbox Mode."
+        "[OK] Active physical SIM slot detected.",
+        "[INFO] Carrier frequency handshake: CONNECTED",
+        "[INFO] intercepting main network layer...",
+        "[OK] Initializing hardware bridge mask...",
+        "[SUCCESS] Carrier signature bypassed successfully.",
+        "[INFO] Deploying custom proxy interface: OWN_CORE_NET [v2.0.1]",
+        "[OK] Virtual tunnel link established over active SIM.",
+        "[SUCCESS] System running. Custom network dashboard is now LIVE."
     ];
 
     let currentLog = 0;
@@ -71,20 +71,18 @@
             const entry = document.createElement('div');
             entry.className = 'log-entry';
             
-            // Add custom colors based on keywords
-            if(logs[currentLog].includes('[WARN]')) entry.className += ' warn';
             if(logs[currentLog].includes('[SUCCESS]')) entry.className += ' highlight';
+            if(logs[currentLog].includes('OWN_CORE_NET')) entry.className += ' blue';
             
             entry.innerHTML = logs[currentLog];
             container.appendChild(entry);
             container.scrollTop = container.scrollHeight;
             currentLog++;
-            setTimeout(printLog, 1500); // 1.5 seconds delay per log
+            setTimeout(printLog, 1200); 
         }
     }
 
-    // Simulate SIM insert detection after 2 seconds
-    setTimeout(printLog, 2000);
+    setTimeout(printLog, 1500);
 </script>
 
 </body>
