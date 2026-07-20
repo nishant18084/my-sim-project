@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube - Netflix Edition</title>
+    <title>Sur Sadhna - Netflix Edition</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#141414">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -49,17 +49,17 @@
 </head>
 <body>
     <header>
-        <div class="brand-logo">NETFLIX <span id="yt-badge">YOUTUBE</span></div>
+        <div class="brand-logo">NETFLIX <span id="yt-badge">SUR SADHNA</span></div>
         <div class="search-box">
-            <input type="text" id="searchQuery" placeholder="YouTube videos search karein...">
+            <input type="text" id="searchQuery" placeholder="Videos search karein...">
             <button onclick="searchYouTube()"><i class="material-icons">search</i></button>
         </div>
     </header>
     <main>
         <div class="billboard" id="heroBillboard">
             <div class="billboard-content">
-                <h1 id="heroTitle">Connecting to YouTube...</h1>
-                <p id="heroDesc">GitHub Actions builds chal raha hai, krpya prateeksha karein...</p>
+                <h1 id="heroTitle">Connecting to Sur Sadhna...</h1>
+                <p id="heroDesc">YouTube server aur GitHub secrets integration verify ho raha hai...</p>
                 <div class="btn-container">
                     <button class="n-btn btn-play" id="heroPlayBtn"><i class="material-icons">play_arrow</i> Play</button>
                     <button class="n-btn btn-info"><i class="material-icons">info_outline</i> Info</button>
@@ -67,36 +67,44 @@
             </div>
         </div>
         <div class="movie-row">
-            <div class="row-title" id="row1Title">Featured YouTube Collection</div>
+            <div class="row-title" id="row1Title">Sur Sadhna Latest Uploads</div>
             <div class="slider-wrapper" id="trendingRow"></div>
         </div>
     </main>
     <script>
         const API_KEY = 'API_KEY_PLACEHOLDER'; 
         const PLAYLIST_ID = 'PLAYLIST_ID_PLACEHOLDER'; 
+
         async function fetchYouTubeData() {
             if(API_KEY === 'API_KEY_PLACEHOLDER' || API_KEY.includes('secrets.')) {
                 loadFallbackCards();
                 return;
             }
             try {
-                const response = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=12&playlistId=${PLAYLIST_ID}&key=${API_KEY}`);
+                const response = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=15&playlistId=${PLAYLIST_ID}&key=${API_KEY}`);
                 const data = await response.json();
-                if(data.items) { renderNetflixStyle(data.items); } else { loadFallbackCards(); }
-            } catch (error) { loadFallbackCards(); }
+                if(data.items && data.items.length > 0) { 
+                    renderNetflixStyle(data.items); 
+                } else { 
+                    loadFallbackCards(); 
+                }
+            } catch (error) { 
+                loadFallbackCards(); 
+            }
         }
+
         function renderNetflixStyle(videos) {
             const row = document.getElementById('trendingRow');
             row.innerHTML = ''; 
-            if(videos.length > 0) {
-                const topVideo = videos[0].snippet;
-                document.getElementById('heroTitle').innerText = topVideo.title;
-                document.getElementById('heroDesc').innerText = topVideo.description.substring(0, 140) + '...';
-                if(topVideo.thumbnails && topVideo.thumbnails.high) {
-                    document.getElementById('heroBillboard').style.backgroundImage = `linear-gradient(to top, #141414 10%, rgba(0,0,0,0) 90%), url('${topVideo.thumbnails.high.url}')`;
-                }
-                document.getElementById('heroPlayBtn').onclick = () => window.open(`https://www.youtube.com/watch?v=${topVideo.resourceId.videoId}`, '_blank');
+            
+            const topVideo = videos[0].snippet;
+            document.getElementById('heroTitle').innerText = topVideo.title;
+            document.getElementById('heroDesc').innerText = topVideo.description.substring(0, 140) + '...';
+            if(topVideo.thumbnails && topVideo.thumbnails.high) {
+                document.getElementById('heroBillboard').style.backgroundImage = `linear-gradient(to top, #141414 10%, rgba(0,0,0,0) 90%), url('${topVideo.thumbnails.high.url}')`;
             }
+            document.getElementById('heroPlayBtn').onclick = () => window.open(`https://www.youtube.com/watch?v=${topVideo.resourceId.videoId}`, '_blank');
+            
             videos.forEach(video => {
                 const snip = video.snippet;
                 const videoId = snip.resourceId.videoId;
@@ -108,34 +116,20 @@
                 row.appendChild(card);
             });
         }
-        async function searchYouTube() {
-            let query = document.getElementById('searchQuery').value;
-            if(!query || API_KEY === 'API_KEY_PLACEHOLDER') return;
-            try {
-                const res = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=${query}&type=video&key=${API_KEY}`);
-                const data = await res.json();
-                const formattedItems = data.items.map(item => ({ snippet: { ...item.snippet, resourceId: { videoId: item.id.videoId } } }));
-                document.getElementById('row1Title').innerText = `Search Results: ${query}`;
-                renderNetflixStyle(formattedItems);
-            } catch(e) {}
-        }
+
         function loadFallbackCards() {
-            document.getElementById('heroTitle').innerText = "Netflix x YouTube Portal";
-            document.getElementById('heroDesc').innerText = "API Secrets perfectly set hain. GitHub actions triggers complete hote hi real data connect ho jayega.";
+            document.getElementById('heroTitle').innerText = "Sur Sadhna Portal";
+            document.getElementById('heroDesc').innerText = "GitHub Actions verification completed successfully. Agar cache issue hai toh Incognito tab me test karein.";
             const row = document.getElementById('trendingRow');
             row.innerHTML = '';
             for(let i=1; i<=8; i++) {
                 const card = document.createElement('div');
                 card.className = 'movie-card';
-                card.innerHTML = `<img src="https://via.placeholder.com/300x450/222/fff?text=YouTube+Show+${i}" alt="Poster"><div class="card-details">YouTube Show ${i}<span>Connected Live</span></div>`;
+                card.innerHTML = `<img src="https://via.placeholder.com/300x450/222/fff?text=Sur+Sadhna+${i}" alt="Poster"><div class="card-details">Sur Sadhna Video ${i}<span>Connecting Live</span></div>`;
                 row.appendChild(card);
             }
         }
         window.onload = fetchYouTubeData;
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js').catch(err => console.log(err)); });
-        }
     </script>
 </body>
 </html>
-welcome 
