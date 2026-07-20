@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Clone - App Mode</title>
+    <title>StreamHub - App Mode</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#ff0000">
@@ -44,29 +44,29 @@
         .logo-section {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 10px;
             font-weight: bold;
             font-size: 20px;
+            color: #ff0000;
             cursor: pointer;
         }
 
-        .logo-section i {
-            color: #ff0000;
-            font-size: 28px;
+        .logo-section span {
+            color: #030303;
         }
 
         .search-section {
             display: flex;
-            flex: 0 1 600px;
+            flex: 0 1 500px;
         }
 
         .search-section input {
             width: 100%;
-            padding: 8px 12px;
+            padding: 8px 16px;
             border: 1px solid #ccc;
             border-radius: 40px 0 0 40px;
             outline: none;
-            font-size: 16px;
+            font-size: 15px;
         }
 
         .search-section button {
@@ -79,18 +79,19 @@
         }
 
         .user-section i {
-            font-size: 24px;
+            font-size: 26px;
             cursor: pointer;
             margin-left: 15px;
+            color: #606060;
         }
 
-        /* Main Container */
+        /* Main Layout */
         .container {
             display: flex;
             margin-top: 56px;
         }
 
-        /* Sidebar Navigation */
+        /* Sidebar */
         aside {
             width: 240px;
             height: calc(100vh - 56px);
@@ -100,96 +101,118 @@
             background: #ffffff;
             padding-top: 12px;
             overflow-y: auto;
+            border-right: 1px solid #e5e5e5;
         }
 
         .nav-link {
             display: flex;
             align-items: center;
-            padding: 10px 24px;
+            padding: 12px 24px;
             text-decoration: none;
             color: #030303;
-            gap: 24px;
+            gap: 20px;
+            font-size: 14px;
         }
 
         .nav-link:hover, .nav-link.active {
-            background: #e5e5e5;
+            background: #f2f2f2;
+            font-weight: 500;
         }
 
-        /* Main Content & Video Grid */
+        /* Content Area */
         main {
             margin-left: 240px;
             padding: 24px;
             width: 100%;
         }
 
-        .video-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 16px;
+        .section-title {
+            font-size: 20px;
+            margin: 20px 0 12px 0;
+            font-weight: bold;
         }
 
-        .video-card {
+        /* Grid System */
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .app-card {
             background: #ffffff;
-            border-radius: 8px;
+            border-radius: 12px;
             overflow: hidden;
+            border: 1px solid #e5e5e5;
+            transition: transform 0.2s;
             cursor: pointer;
         }
 
-        .thumbnail {
-            position: relative;
-            width: 100%;
-            padding-top: 56.25%; /* 16:9 Aspect Ratio */
-            background: #ddd;
+        .app-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
-        .thumbnail img {
-            position: absolute;
-            top: 0;
-            left: 0;
+        .app-banner {
             width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .video-details {
+            height: 120px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            text-align: center;
+            padding: 10px;
+        }
+
+        /* Color customisation for visual variety */
+        .bg-free { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+        .bg-premium { background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%); }
+        .bg-regional { background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%); }
+        .bg-niche { background: linear-gradient(135deg, #8e2de2 0%, #4a00e0 100%); }
+
+        .app-info {
             padding: 12px;
-            gap: 12px;
         }
 
-        .channel-avatar {
-            width: 36px;
-            height: 36px;
-            background: #ccc;
-            border-radius: 50%;
-        }
-
-        .video-info h3 {
-            font-size: 14px;
+        .app-info h3 {
+            font-size: 16px;
             margin-bottom: 6px;
-            line-height: 20px;
+            color: #0f0f0f;
+        }
+
+        .app-info p {
+            font-size: 13px;
+            color: #606060;
+            line-height: 18px;
             display: -webkit-box;
-            -webkit-line-clamp: 2;
+            -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
 
-        .video-info p {
-            font-size: 12px;
-            color: #606060;
-        }
-
-        /* Responsive Design for Mobile (App Mode) */
+        /* Responsive UI for App Mode (Mobile) */
         @media (max-width: 768px) {
             aside {
-                display: none; /* Mobile par sidebar hide ho jayega */
+                display: none;
             }
             main {
                 margin-left: 0;
-                padding: 12px;
+                padding: 16px;
             }
             .search-section {
-                display: none; /* Mobile par short headers ke liye */
+                display: none;
+            }
+            .app-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 12px;
+            }
+            .app-banner {
+                height: 90px;
+                font-size: 15px;
             }
         }
     </style>
@@ -198,86 +221,145 @@
 
     <header>
         <div class="logo-section">
-            <i class="material-icons">play_circle_filled</i>
-            <span>YouTube</span>
+            <i class="material-icons" style="font-size: 32px;">live_tv</i>
+            <span>StreamHub</span>
         </div>
         <div class="search-section">
-            <input type="text" placeholder="Search">
+            <input type="text" id="searchInput" placeholder="Search platforms, e.g., Netflix, JioCinema..." onkeyup="searchApps()">
             <button><i class="material-icons">search</i></button>
         </div>
         <div class="user-section">
-            <i class="material-icons">video_call</i>
-            <i class="material-icons">notifications</i>
+            <i class="material-icons">apps</i>
             <i class="material-icons">account_circle</i>
         </div>
     </header>
 
     <div class="container">
         <aside>
-            <a href="#" class="nav-link active"><i class="material-icons">home</i>Home</a>
-            <a href="#" class="nav-link"><i class="material-icons">explore</i>Explore</a>
-            <a href="#" class="nav-link"><i class="material-icons">subscriptions</i>Subscriptions</a>
-            <hr style="border: 0; border-top: 1px solid #ddd; margin: 10px 0;">
-            <a href="#" class="nav-link"><i class="material-icons">video_library</i>Library</a>
-            <a href="#" class="nav-link"><i class="material-icons">history</i>History</a>
-            <a href="#" class="nav-link"><i class="material-icons">watch_later</i>Watch Later</a>
+            <a href="#free-section" class="nav-link active"><i class="material-icons">money_off</i>Free Platforms</a>
+            <a href="#premium-section" class="nav-link"><i class="material-icons">card_membership</i>Premium OTT</a>
+            <a href="#regional-section" class="nav-link"><i class="material-icons">translate</i>Regional Apps</a>
+            <a href="#niche-section" class="nav-link"><i class="material-icons">stars</i>Niche & Indie</a>
         </aside>
 
         <main>
-            <div class="video-grid">
-                
-                <div class="video-card">
-                    <div class="thumbnail">
-                        <img src="https://via.placeholder.com/640x360" alt="Thumbnail">
-                    </div>
-                    <div class="video-details">
-                        <div class="channel-avatar"></div>
-                        <div class="video-info">
-                            <h3>Aapki Pehli Video Ka Title Yahan Aayega</h3>
-                            <p>Channel Name</p>
-                            <p>100K views • 2 days ago</p>
-                        </div>
-                    </div>
+            <div class="section-title" id="free-section">Free Movie Platforms (Bina Kaise Wale)</div>
+            <div class="app-grid" id="freeGrid">
+                <div class="app-card">
+                    <div class="app-banner bg-free">YouTube</div>
+                    <div class="app-info"><h3>YouTube</h3><p>Sabse bada free collection. Hazaron purani aur nayi Bollywood, South Indian movies free mein dekhein.</p></div>
                 </div>
-
-                <div class="video-card">
-                    <div class="thumbnail">
-                        <img src="https://via.placeholder.com/640x360" alt="Thumbnail">
-                    </div>
-                    <div class="video-details">
-                        <div class="channel-avatar"></div>
-                        <div class="video-info">
-                            <h3>Dusri Video Ka Title Jo Kafi Lamba Ho Sakta Hai</h3>
-                            <p>Channel Name</p>
-                            <p>1M views • 1 week ago</p>
-                        </div>
-                    </div>
+                <div class="app-card">
+                    <div class="app-banner bg-free">JioCinema</div>
+                    <div class="app-info"><h3>JioCinema</h3><p>Free movies, web series aur live sports dekhna bilkul free hai.</p></div>
                 </div>
-
-                <div class="video-card">
-                    <div class="thumbnail">
-                        <img src="https://via.placeholder.com/640x360" alt="Thumbnail">
-                    </div>
-                    <div class="video-details">
-                        <div class="channel-avatar"></div>
-                        <div class="video-info">
-                            <h3>How to build a PWA App Clone easily</h3>
-                            <p>Tech Channel</p>
-                            <p>50K views • 5 hours ago</p>
-                        </div>
-                    </div>
+                <div class="app-card">
+                    <div class="app-banner bg-free">MX Player</div>
+                    <div class="app-info"><h3>MX Player</h3><p>Bohot saari Hindi aur South Indian dubbed movies free mein dekhne ko mil jati hain.</p></div>
                 </div>
+                <div class="app-card">
+                    <div class="app-banner bg-free">Amazon miniTV</div>
+                    <div class="app-info"><h3>Amazon miniTV</h3><p>Amazon app ke andar free service hai jahan short films aur web series dekh sakte hain.</p></div>
+                </div>
+                <div class="app-card">
+                    <div class="app-banner bg-free">RunnTV</div>
+                    <div class="app-info"><h3>RunnTV</h3><p>Free live TV channels aur movies streaming ka naya platform.</p></div>
+                </div>
+                <div class="app-card">
+                    <div class="app-banner bg-free">ShemarooMe</div>
+                    <div class="app-info"><h3>ShemarooMe</h3><p>Purani classic aur regional filmon ka behtar free section.</p></div>
+                </div>
+            </div>
 
+            <div class="section-title" id="premium-section">Premium OTT Platforms (Subscription Wale)</div>
+            <div class="app-grid" id="premiumGrid">
+                <div class="app-card">
+                    <div class="app-banner bg-premium">Netflix</div>
+                    <div class="app-info"><h3>Netflix</h3><p>Best international cinema, Hollywood aur high-quality original Indian series platform.</p></div>
+                </div>
+                <div class="app-card">
+                    <div class="app-banner bg-premium">Amazon Prime</div>
+                    <div class="app-info"><h3>Amazon Prime Video</h3><p>Nayi release hone wali Bollywood aur South Indian movies sabse pehle aati hain.</p></div>
+                </div>
+                <div class="app-card">
+                    <div class="app-banner bg-premium">Disney+ Hotstar</div>
+                    <div class="app-info"><h3>Disney+ Hotstar</h3><p>Hollywood, Disney movies, Bollywood aur live cricket ke liye behtar app.</p></div>
+                </div>
+                <div class="app-card">
+                    <div class="app-banner bg-premium">Zee5</div>
+                    <div class="app-info"><h3>Zee5</h3><p>Agar aapko Zee ke TV shows aur behtar Hindi regional cinema pasand hai.</p></div>
+                </div>
+                <div class="app-card">
+                    <div class="app-banner bg-premium">SonyLIV</div>
+                    <div class="app-info"><h3>SonyLIV</h3><p>Sony ke serials ke sath-sath yahan behtar Hollywood movies ka collection milta hai.</p></div>
+                </div>
+            </div>
+
+            <div class="section-title" id="regional-section">Regional Movie Platforms (Aapki Bhasha Mein)</div>
+            <div class="app-grid" id="regionalGrid">
+                <div class="app-card">
+                    <div class="app-banner bg-regional">Aha</div>
+                    <div class="app-info"><h3>Aha</h3><p>Telugu aur Tamil movies aur originals ka sabse bada platform.</p></div>
+                </div>
+                <div class="app-card">
+                    <div class="app-banner bg-regional">Hoichoi</div>
+                    <div class="app-info"><h3>Hoichoi</h3><p>Exclusive Bengali movies aur popular web series ka hub.</p></div>
+                </div>
+                <div class="app-card">
+                    <div class="app-banner bg-regional">Sun NXT</div>
+                    <div class="app-info"><h3>Sun NXT</h3><p>South Indian (Tamil, Telugu, Malayalam, Kannada) movies ka bada collection.</p></div>
+                </div>
+                <div class="app-card">
+                    <div class="app-banner bg-regional">Chaupal</div>
+                    <div class="app-info"><h3>Chaupal</h3><p>Punjabi, Haryanvi aur Bhojpuri movies aur videos ke liye dedicated space.</p></div>
+                </div>
+            </div>
+
+            <div class="section-title" id="niche-section">Niche & Indie Platforms (Kuch Alag Content)</div>
+            <div class="app-grid" id="nicheGrid">
+                <div class="app-card">
+                    <div class="app-banner bg-niche">Crunchyroll</div>
+                    <div class="app-info"><h3>Crunchyroll</h3><p>Anime (Japanese animation) aur Asian drama lovers ke liye best global application.</p></div>
+                </div>
+                <div class="app-card">
+                    <div class="app-banner bg-niche">Epic On</div>
+                    <div class="app-info"><h3>Epic On</h3><p>Indian history, mythology aur unique Indian culture par based content aur documentaries.</p></div>
+                </div>
+                <div class="app-card">
+                    <div class="app-banner bg-niche">DocuBay</div>
+                    <div class="app-info"><h3>DocuBay</h3><p>Duniya bhar ki award-winning aur authentic documentaries dekhne ke liye perfect catalog.</p></div>
+                </div>
+                <div class="app-card">
+                    <div class="app-banner bg-niche">Tata Play Binge</div>
+                    <div class="app-info"><h3>Tata Play Binge</h3><p>Ek hi application ke andar kai saare OTT platforms ka direct combo pack handle karein.</p></div>
+                </div>
             </div>
         </main>
     </div>
 
     <script>
+        function searchApps() {
+            let input = document.getElementById('searchInput').value.toLowerCase();
+            let cards = document.getElementsByClassName('app-card');
+            
+            for (let i = 0; i < cards.length; i++) {
+                let title = cards[i].getElementsByTagName('h3')[0].innerText.toLowerCase();
+                let desc = cards[i].getElementsByTagName('p')[0].innerText.toLowerCase();
+                
+                if (title.includes(input) || desc.includes(input)) {
+                    cards[i].style.display = "";
+                } else {
+                    cards[i].style.display = "none";
+                }
+            }
+        }
+
+        // PWA Service Worker for App Mode
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/sw.js')
-                    .then(reg => console.log('App Mode Service Worker Registered!', reg))
-                    .catch(err => console.log('Service Worker Error', err));
+                    .then(reg => console.log('App Mode Active!', reg))
+                    .catch(err => console.log('SW Registration Failed', err));
             });
         }
     </script>
