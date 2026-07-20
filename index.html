@@ -3,235 +3,283 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OWN_CORE_NET Real Speed Test</title>
+    <title>YouTube Clone - App Mode</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ff0000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
     <style>
-        body {
-            background-color: #0d0d0d;
-            color: #00ff00;
-            font-family: 'Courier New', Courier, monospace;
-            padding: 20px;
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Roboto, Arial, sans-serif;
         }
-        .terminal {
-            border: 1px solid #00ff00;
-            padding: 15px;
-            background-color: #000;
-            box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
-            min-height: 85vh;
+
+        body {
+            background-color: #f9f9f9;
+            color: #030303;
         }
-        .status-bar {
-            border-bottom: 1px solid #00ff00;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
+
+        /* Top Header Navigation */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 56px;
+            background: #ffffff;
             display: flex;
             justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+            z-index: 100;
         }
-        .speed-display {
-            font-size: 24px;
-            color: #ffffff;
-            margin: 20px 0;
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
             font-weight: bold;
-            text-align: center;
-            border: 1px dashed #00ff00;
-            padding: 15px;
-            background: rgba(0, 255, 0, 0.05);
-        }
-        .log-entry {
-            margin: 5px 0;
-            font-size: 0.85em;
-        }
-        .white { color: #ffffff; }
-        .red { color: #ff3333; }
-        .btn-test {
-            background: #000;
-            color: #00ff00;
-            border: 1px solid #00ff00;
-            padding: 10px 20px;
-            font-family: 'Courier New', Courier, monospace;
+            font-size: 20px;
             cursor: pointer;
+        }
+
+        .logo-section i {
+            color: #ff0000;
+            font-size: 28px;
+        }
+
+        .search-section {
+            display: flex;
+            flex: 0 1 600px;
+        }
+
+        .search-section input {
             width: 100%;
-            font-weight: bold;
-            margin-top: 15px;
-        }
-        .btn-test:active {
-            background: #00ff00;
-            color: #000;
-        }
-    </style>
-</head>
-<body>
-
-<div class="terminal">
-    <div class="status-bar">
-        <div>NET_MASK: <span style="color:#fff;">OWN_CORE_NET</span></div>
-        <div>TEST: <span style="color:#fff;">REAL_SPEED_CHECK</span></div>
-    </div>
-    
-    <div class="speed-display" id="speed-meter">
-        SPEED: -- Mbps
-    </div>
-
-    <div id="log-container">
-        <div class="log-entry">[READY] System online. Press button to run REAL network test...</div>
-    </div>
-
-    <button class="btn-test" id="start-btn" onclick="runRealSpeedTest()">START REAL TEST</button>
-</div>
-
-<script>
-    const container = document.getElementById('log-container');
-    const speedMeter = document.getElementById('speed-meter');
-    const startBtn = document.getElementById('start-btn');
-
-    function addLog(text, className = '') {
-        const entry = document.createElement('div');
-        entry.className = 'log-entry ' + className;
-        entry.innerHTML = text;
-        container.appendChild(entry);
-    }
-
-    async function runRealSpeedTest() {
-        startBtn.disabled = true;
-        startBtn.innerText = "TESTING REAL SPEED...";
-        speedMeter.innerHTML = "FETCHING DATA...";
-        speedMeter.style.color = "#00ff00";
-        
-        addLog("[INFO] Initializing real-time latency ping...");
-        
-        // Ek real fast-loading public file test karne ke liye (approx 5MB image file)
-        const testImageLink = "https://upload.wikimedia.org/wikipedia/commons/3/3a/Linear_Image_Format_test_file.org.jpg?t=" + new Date().getTime();
-        const fileSizeInBits = 5 * 1024 * 1024 * 8; // Estimate size in bits
-
-        // Loading effect
-        let dotCount = 0;
-        let loader = setInterval(() => {
-            dotCount = (dotCount + 1) % 4;
-            speedMeter.innerHTML = "TESTING" + ".".repeat(dotCount);
-        }, 300);
-
-        try {
-            const startTime = new Date().getTime();
-            
-            // Asli network hit generate kar rahe hain file download karke
-            const response = await fetch(testImageLink);
-            const blob = await response.blob();
-            
-            const endTime = new Date().getTime();
-            clearInterval(loader);
-
-            const durationInSeconds = (endTime - startTime) / 1000;
-            // Bits per second to Megabits per second (Mbps)
-            let speedMbps = ((fileSizeInBits / durationInSeconds) / (1024 * 1024)).toFixed(2);
-            
-            // Agar result bahut high ya low aaye toh control mapping
-            if (speedMbps > 500) speedMbps = (Math.random() * (150 - 80) + 80).toFixed(2);
-
-            speedMeter.innerHTML = `REAL SPEED: ${speedMbps} Mbps`;
-            speedMeter.style.color = '#ffffff';
-            
-            addLog(`[SUCCESS] Packet download complete in ${durationInSeconds}s.`, 'white');
-            addLog(`[RESULT] Current network band capability: ${speedMbps} Mbps.`, 'white');
-            
-        } catch (error) {
-            clearInterval(loader);
-            speedMeter.innerHTML = "ERROR";
-            speedMeter.style.color = "#ff3333";
-            addLog("[ERROR] Failed to fetch live test packets. Check internet connection.", 'red');
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 40px 0 0 40px;
+            outline: none;
+            font-size: 16px;
         }
 
-        startBtn.disabled = false;
-        startBtn.innerText = "RUN AGAIN";
-    }
-</script>
-
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OWN_CORE_NET Terminal</title>
-    <style>
-        body {
-            background-color: #0d0d0d;
-            color: #00ff00;
-            font-family: 'Courier New', Courier, monospace;
-            padding: 20px;
-            margin: 0;
-            overflow: hidden;
+        .search-section button {
+            padding: 0 20px;
+            border: 1px solid #ccc;
+            border-left: none;
+            border-radius: 0 40px 40px 0;
+            background: #f8f8f8;
+            cursor: pointer;
         }
-        .terminal {
-            border: 1px solid #00ff00;
-            padding: 15px;
-            background-color: #000;
-            box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
-            height: 85vh;
+
+        .user-section i {
+            font-size: 24px;
+            cursor: pointer;
+            margin-left: 15px;
+        }
+
+        /* Main Container */
+        .container {
+            display: flex;
+            margin-top: 56px;
+        }
+
+        /* Sidebar Navigation */
+        aside {
+            width: 240px;
+            height: calc(100vh - 56px);
+            position: fixed;
+            top: 56px;
+            left: 0;
+            background: #ffffff;
+            padding-top: 12px;
             overflow-y: auto;
         }
-        .status-bar {
-            border-bottom: 1px solid #00ff00;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
+
+        .nav-link {
             display: flex;
-            justify-content: space-between;
-            font-size: 0.9em;
+            align-items: center;
+            padding: 10px 24px;
+            text-decoration: none;
+            color: #030303;
+            gap: 24px;
         }
-        .log-entry {
-            margin: 5px 0;
-            font-size: 0.85em;
-            line-height: 1.4;
+
+        .nav-link:hover, .nav-link.active {
+            background: #e5e5e5;
         }
-        .highlight { color: #ffffff; font-weight: bold; }
-        .blue { color: #33ccff; }
+
+        /* Main Content & Video Grid */
+        main {
+            margin-left: 240px;
+            padding: 24px;
+            width: 100%;
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .video-card {
+            background: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .thumbnail {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+            background: #ddd;
+        }
+
+        .thumbnail img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-details {
+            display: flex;
+            padding: 12px;
+            gap: 12px;
+        }
+
+        .channel-avatar {
+            width: 36px;
+            height: 36px;
+            background: #ccc;
+            border-radius: 50%;
+        }
+
+        .video-info h3 {
+            font-size: 14px;
+            margin-bottom: 6px;
+            line-height: 20px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .video-info p {
+            font-size: 12px;
+            color: #606060;
+        }
+
+        /* Responsive Design for Mobile (App Mode) */
+        @media (max-width: 768px) {
+            aside {
+                display: none; /* Mobile par sidebar hide ho jayega */
+            }
+            main {
+                margin-left: 0;
+                padding: 12px;
+            }
+            .search-section {
+                display: none; /* Mobile par short headers ke liye */
+            }
+        }
     </style>
 </head>
 <body>
 
-<div class="terminal">
-    <div class="status-bar">
-        <div>SYS_MODE: <span class="highlight">ACTIVE_SIM_LINK</span></div>
-        <div>NET_MASK: <span class="highlight">OWN_CORE_NET</span></div>
+    <header>
+        <div class="logo-section">
+            <i class="material-icons">play_circle_filled</i>
+            <span>YouTube</span>
+        </div>
+        <div class="search-section">
+            <input type="text" placeholder="Search">
+            <button><i class="material-icons">search</i></button>
+        </div>
+        <div class="user-section">
+            <i class="material-icons">video_call</i>
+            <i class="material-icons">notifications</i>
+            <i class="material-icons">account_circle</i>
+        </div>
+    </header>
+
+    <div class="container">
+        <aside>
+            <a href="#" class="nav-link active"><i class="material-icons">home</i>Home</a>
+            <a href="#" class="nav-link"><i class="material-icons">explore</i>Explore</a>
+            <a href="#" class="nav-link"><i class="material-icons">subscriptions</i>Subscriptions</a>
+            <hr style="border: 0; border-top: 1px solid #ddd; margin: 10px 0;">
+            <a href="#" class="nav-link"><i class="material-icons">video_library</i>Library</a>
+            <a href="#" class="nav-link"><i class="material-icons">history</i>History</a>
+            <a href="#" class="nav-link"><i class="material-icons">watch_later</i>Watch Later</a>
+        </aside>
+
+        <main>
+            <div class="video-grid">
+                
+                <div class="video-card">
+                    <div class="thumbnail">
+                        <img src="https://via.placeholder.com/640x360" alt="Thumbnail">
+                    </div>
+                    <div class="video-details">
+                        <div class="channel-avatar"></div>
+                        <div class="video-info">
+                            <h3>Aapki Pehli Video Ka Title Yahan Aayega</h3>
+                            <p>Channel Name</p>
+                            <p>100K views • 2 days ago</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="video-card">
+                    <div class="thumbnail">
+                        <img src="https://via.placeholder.com/640x360" alt="Thumbnail">
+                    </div>
+                    <div class="video-details">
+                        <div class="channel-avatar"></div>
+                        <div class="video-info">
+                            <h3>Dusri Video Ka Title Jo Kafi Lamba Ho Sakta Hai</h3>
+                            <p>Channel Name</p>
+                            <p>1M views • 1 week ago</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="video-card">
+                    <div class="thumbnail">
+                        <img src="https://via.placeholder.com/640x360" alt="Thumbnail">
+                    </div>
+                    <div class="video-details">
+                        <div class="channel-avatar"></div>
+                        <div class="video-info">
+                            <h3>How to build a PWA App Clone easily</h3>
+                            <p>Tech Channel</p>
+                            <p>50K views • 5 hours ago</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
     </div>
-    
-    <div id="log-container">
-        <div class="log-entry">[INFO] Booting custom interface engine...</div>
-    </div>
-</div>
 
-<script>
-    const logs = [
-        "[OK] Active physical SIM slot detected.",
-        "[INFO] Carrier frequency handshake: CONNECTED",
-        "[INFO] intercepting main network layer...",
-        "[OK] Initializing hardware bridge mask...",
-        "[SUCCESS] Carrier signature bypassed successfully.",
-        "[INFO] Deploying custom proxy interface: OWN_CORE_NET [v2.0.1]",
-        "[OK] Virtual tunnel link established over active SIM.",
-        "[SUCCESS] System running. Custom network dashboard is now LIVE."
-    ];
-
-    let currentLog = 0;
-    const container = document.getElementById('log-container');
-
-    function printLog() {
-        if (currentLog < logs.length) {
-            const entry = document.createElement('div');
-            entry.className = 'log-entry';
-            
-            if(logs[currentLog].includes('[SUCCESS]')) entry.className += ' highlight';
-            if(logs[currentLog].includes('OWN_CORE_NET')) entry.className += ' blue';
-            
-            entry.innerHTML = logs[currentLog];
-            container.appendChild(entry);
-            container.scrollTop = container.scrollHeight;
-            currentLog++;
-            setTimeout(printLog, 1200); 
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('App Mode Service Worker Registered!', reg))
+                    .catch(err => console.log('Service Worker Error', err));
+            });
         }
-    }
-
-    setTimeout(printLog, 1500);
-</script>
-
+    </script>
 </body>
 </html>
