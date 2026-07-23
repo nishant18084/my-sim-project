@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BCECE Student Portal & Study Material</title>
+    <title>BCECE Prep Hub</title>
     <style>
         * {
             box-sizing: border-box;
@@ -70,14 +70,17 @@
             list-style-type: none;
         }
         ul li {
-            margin-bottom: 10px;
-            padding-bottom: 5px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
             border-bottom: 1px dashed #eee;
         }
         ul li a {
             color: #0066cc;
             text-decoration: none;
             font-weight: 500;
+        }
+        ul li a:hover {
+            text-decoration: underline;
         }
         .btn {
             display: block;
@@ -91,32 +94,9 @@
             border-radius: 4px;
             text-decoration: none;
             font-weight: bold;
-            cursor: pointer;
         }
         .btn:hover {
             background-color: #005f73;
-        }
-        .search-box input {
-            width: 70%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .search-box button {
-            width: 28%;
-            padding: 8px;
-            background: #003366;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .video-card {
-            background: #f9f9f9;
-            padding: 10px;
-            margin-top: 10px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
         }
         footer {
             background-color: #003366;
@@ -131,26 +111,35 @@
 
 <header>
     <h1>BCECE Prep Hub</h1>
-    <p>Syllabus, PYQs & Free Video Lectures</p>
+    <p>Syllabus, PYQs & Important Updates</p>
 </header>
 
 <nav>
     <a href="#syllabus">Syllabus</a>
     <a href="#pyq">PYQs</a>
-    <a href="#videos">Video Lectures</a>
-    <a href="https://bceceboard.bihar.gov.in/" target="_blank">Official Portal</a>
+    <a href="#updates">Updates</a>
+    <a href="https://bceceboard.bihar.gov.in/" target="_blank">Official Website</a>
 </nav>
 
 <div class="container">
     <div class="main-content">
         
-        <div class="card" id="syllabus">
-            <h2>Exam Syllabus</h2>
+        <div class="card" id="updates">
+            <h2>Latest Announcements</h2>
             <ul>
-                <li><strong>Physics:</strong> Kinematics, Laws of Motion, Optics, Thermodynamics</li>
-                <li><strong>Chemistry:</strong> Atomic Structure, Organic Chemistry, Chemical Bonding</li>
-                <li><strong>Mathematics:</strong> Calculus, Algebra, Coordinate Geometry</li>
-                <li><strong>Biology:</strong> Genetics, Cell Biology, Human Physiology</li>
+                <li>📢 <a href="#">BCECE Entrance Exam Application Form Guidance</a></li>
+                <li>📢 <a href="#">Important Notice regarding Exam Centers & Dates</a></li>
+                <li>📢 <a href="#">Counselling Procedure and Document Verification List</a></li>
+            </ul>
+        </div>
+
+        <div class="card" id="syllabus">
+            <h2>Exam Syllabus Overview</h2>
+            <ul>
+                <li><strong>Physics:</strong> Kinematics, Laws of Motion, Optics, Thermodynamics, Electrostatics</li>
+                <li><strong>Chemistry:</strong> Organic Chemistry, Atomic Structure, Chemical Bonding, Solutions</li>
+                <li><strong>Mathematics:</strong> Calculus, Algebra, Vectors, Coordinate Geometry</li>
+                <li><strong>Biology:</strong> Cell Biology, Genetics, Plant & Human Physiology</li>
             </ul>
         </div>
 
@@ -163,223 +152,21 @@
             </ul>
         </div>
 
-        <div class="card" id="videos">
-            <h2>Search Study Videos</h2>
-            <p style="font-size: 13px; color: #666; margin-bottom: 10px;">Apni YouTube API Key darj karke topic search karein:</p>
-            <input type="text" id="apiKey" placeholder="YouTube API Key" style="width:100%; padding:8px; margin-bottom:8px;">
-            
-            <div class="search-box">
-                <input type="text" id="searchQuery" value="BCECE Physics preparation">
-                <button onclick="searchYoutube()">Search</button>
-            </div>
-
-            <div id="videoResults" style="margin-top: 15px;"></div>
-        </div>
-
     </div>
 
     <div class="sidebar">
         <div class="card">
-            <h3>Important Links</h3>
-            <a href="https://bceceboard.bihar.gov.in/" target="_blank" class="btn">Official Website</a>
-            <a href="#" class="btn">Download Admit Card</a>
-            <a href="#" class="btn">Check Merit List</a>
+            <h3>Quick Links</h3>
+            <a href="https://bceceboard.bihar.gov.in/" target="_blank" class="btn">Official Portal Link</a>
+            <a href="#" class="btn">Download Syllabus PDF</a>
+            <a href="#" class="btn">Helpdesk & Contact</a>
         </div>
     </div>
 </div>
 
 <footer>
-    <p>&copy; 2026 BCECE Prep Hub | Educational Purpose Only</p>
+    <p>&copy; 2026 BCECE Prep Hub | Student Guidance Portal</p>
 </footer>
-
-<script>
-    async function searchYoutube() {
-        const apiKey = document.getElementById('apiKey').value.trim();
-        const query = document.getElementById('searchQuery').value.trim();
-        const resultsDiv = document.getElementById('videoResults');
-
-        if (!apiKey) {
-            alert('Pehle apni API Key dalein!');
-            return;
-        }
-
-        resultsDiv.innerHTML = 'Loading videos...';
-
-        const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(query)}&type=video&maxResults=3&key=${apiKey}`;
-
-        try {
-            const res = await fetch(url);
-            const data = await res.json();
-
-            if (data.error) {
-                resultsDiv.innerHTML = `<p style="color:red;">Error: ${data.error.message}</p>`;
-                return;
-            }
-
-            resultsDiv.innerHTML = '';
-            data.items.forEach(item => {
-                resultsDiv.innerHTML += `
-                    <div class="video-card">
-                        <h4>${item.snippet.title}</h4>
-                        <a href="https://www.youtube.com/watch?v=${item.id.videoId}" target="_blank">Watch on YouTube</a>
-                    </div>
-                `;
-            });
-        } catch (err) {
-            resultsDiv.innerHTML = '<p style="color:red;">Error fetching data.</p>';
-        }
-    }
-</script>
 
 </body>
 </html>
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BCECE Board Portal</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f9;
-            color: #333;
-            line-height: 1.6;
-        }
-        header {
-            background-color: #003366;
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-        nav {
-            background-color: #002244;
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        nav a {
-            color: white;
-            padding: 12px 20px;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        nav a:hover {
-            background-color: #004488;
-        }
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            margin: 20px auto;
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-        .main-content {
-            flex: 3;
-            min-width: 300px;
-            background: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        .sidebar {
-            flex: 1;
-            min-width: 250px;
-            background: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        h2, h3 {
-            color: #003366;
-            margin-bottom: 15px;
-            border-bottom: 2px solid #003366;
-            padding-bottom: 5px;
-        }
-        ul {
-            list-style-type: square;
-            padding-left: 20px;
-        }
-        ul li {
-            margin-bottom: 10px;
-        }
-        ul li a {
-            color: #0066cc;
-            text-decoration: none;
-        }
-        ul li a:hover {
-            text-decoration: underline;
-        }
-        .btn {
-            display: block;
-            width: 100%;
-            background-color: #008CBA;
-            color: white;
-            text-align: center;
-            padding: 12px;
-            margin-bottom: 10px;
-            border: none;
-            border-radius: 4px;
-            text-decoration: none;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .btn:hover {
-            background-color: #005f73;
-        }
-        footer {
-            background-color: #003366;
-            color: white;
-            text-align: center;
-            padding: 15px;
-            margin-top: 30px;
-        }
-    </style>
-</head>
-<body>
-
-<header>
-    <h1>Bihar Combined Entrance Competitive Examination Board</h1>
-    <p>Official Portal Clone</p>
-</header>
-
-<nav>
-    <a href="#">Home</a>
-    <a href="#">Online Application</a>
-    <a href="#">Admit Card</a>
-    <a href="#">Result</a>
-    <a href="#">Prospectus</a>
-    <a href="#">Contact Us</a>
-</nav>
-
-<div class="container">
-    <div class="main-content">
-        <h2>Latest Notifications</h2>
-        <ul>
-            <li><a href="#">Online Application Portal of BCECE-2026 is now active.</a></li>
-            <li><a href="#">Download Admit Card for BCECE Entrance Examination.</a></li>
-            <li><a href="#">Important Notice regarding Online Counselling Schedule.</a></li>
-            <li><a href="#">Revised Merit List for Engineering & Pharmacy Courses.</a></li>
-        </ul>
-    </div>
-    
-    <div class="sidebar">
-        <h3>Quick Links</h3>
-        <a href="#" class="btn">Online Application Portal</a>
-        <a href="#" class="btn">Download Prospectus</a>
-        <a href="#" class="btn">Check Seat Allotment</a>
-    </div>
-</div>
-
-<footer>
-    <p>&copy; 2026 BCECE Board. All Rights Reserved.</p>
-</footer>
-
-</body>
-</html>.   
-welcome 
-
