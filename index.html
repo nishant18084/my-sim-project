@@ -3,6 +3,239 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BCECE Student Portal & Study Material</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            line-height: 1.6;
+        }
+        header {
+            background-color: #003366;
+            color: white;
+            padding: 25px 15px;
+            text-align: center;
+        }
+        nav {
+            background-color: #002244;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        nav a {
+            color: white;
+            padding: 12px 20px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        nav a:hover {
+            background-color: #004488;
+        }
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: 20px auto;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .main-content {
+            flex: 2;
+            min-width: 300px;
+        }
+        .sidebar {
+            flex: 1;
+            min-width: 250px;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h2, h3 {
+            color: #003366;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #003366;
+            padding-bottom: 5px;
+        }
+        ul {
+            list-style-type: none;
+        }
+        ul li {
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px dashed #eee;
+        }
+        ul li a {
+            color: #0066cc;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            background-color: #008CBA;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #005f73;
+        }
+        .search-box input {
+            width: 70%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .search-box button {
+            width: 28%;
+            padding: 8px;
+            background: #003366;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .video-card {
+            background: #f9f9f9;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        footer {
+            background-color: #003366;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>BCECE Prep Hub</h1>
+    <p>Syllabus, PYQs & Free Video Lectures</p>
+</header>
+
+<nav>
+    <a href="#syllabus">Syllabus</a>
+    <a href="#pyq">PYQs</a>
+    <a href="#videos">Video Lectures</a>
+    <a href="https://bceceboard.bihar.gov.in/" target="_blank">Official Portal</a>
+</nav>
+
+<div class="container">
+    <div class="main-content">
+        
+        <div class="card" id="syllabus">
+            <h2>Exam Syllabus</h2>
+            <ul>
+                <li><strong>Physics:</strong> Kinematics, Laws of Motion, Optics, Thermodynamics</li>
+                <li><strong>Chemistry:</strong> Atomic Structure, Organic Chemistry, Chemical Bonding</li>
+                <li><strong>Mathematics:</strong> Calculus, Algebra, Coordinate Geometry</li>
+                <li><strong>Biology:</strong> Genetics, Cell Biology, Human Physiology</li>
+            </ul>
+        </div>
+
+        <div class="card" id="pyq">
+            <h2>Previous Year Question Papers</h2>
+            <ul>
+                <li>📄 <a href="#">BCECE 2025 Question Paper with Solution (PDF)</a></li>
+                <li>📄 <a href="#">BCECE 2024 Question Paper (PDF)</a></li>
+                <li>📄 <a href="#">BCECE 2023 Question Paper (PDF)</a></li>
+            </ul>
+        </div>
+
+        <div class="card" id="videos">
+            <h2>Search Study Videos</h2>
+            <p style="font-size: 13px; color: #666; margin-bottom: 10px;">Apni YouTube API Key darj karke topic search karein:</p>
+            <input type="text" id="apiKey" placeholder="YouTube API Key" style="width:100%; padding:8px; margin-bottom:8px;">
+            
+            <div class="search-box">
+                <input type="text" id="searchQuery" value="BCECE Physics preparation">
+                <button onclick="searchYoutube()">Search</button>
+            </div>
+
+            <div id="videoResults" style="margin-top: 15px;"></div>
+        </div>
+
+    </div>
+
+    <div class="sidebar">
+        <div class="card">
+            <h3>Important Links</h3>
+            <a href="https://bceceboard.bihar.gov.in/" target="_blank" class="btn">Official Website</a>
+            <a href="#" class="btn">Download Admit Card</a>
+            <a href="#" class="btn">Check Merit List</a>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <p>&copy; 2026 BCECE Prep Hub | Educational Purpose Only</p>
+</footer>
+
+<script>
+    async function searchYoutube() {
+        const apiKey = document.getElementById('apiKey').value.trim();
+        const query = document.getElementById('searchQuery').value.trim();
+        const resultsDiv = document.getElementById('videoResults');
+
+        if (!apiKey) {
+            alert('Pehle apni API Key dalein!');
+            return;
+        }
+
+        resultsDiv.innerHTML = 'Loading videos...';
+
+        const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(query)}&type=video&maxResults=3&key=${apiKey}`;
+
+        try {
+            const res = await fetch(url);
+            const data = await res.json();
+
+            if (data.error) {
+                resultsDiv.innerHTML = `<p style="color:red;">Error: ${data.error.message}</p>`;
+                return;
+            }
+
+            resultsDiv.innerHTML = '';
+            data.items.forEach(item => {
+                resultsDiv.innerHTML += `
+                    <div class="video-card">
+                        <h4>${item.snippet.title}</h4>
+                        <a href="https://www.youtube.com/watch?v=${item.id.videoId}" target="_blank">Watch on YouTube</a>
+                    </div>
+                `;
+            });
+        } catch (err) {
+            resultsDiv.innerHTML = '<p style="color:red;">Error fetching data.</p>';
+        }
+    }
+</script>
+
+</body>
+</html>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BCECE Board Portal</title>
     <style>
         * {
