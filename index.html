@@ -1,1 +1,172 @@
 
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sarkari Info - Quick Text Summarizer</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: #f0f4f8;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: #ffffff;
+            max-width: 700px;
+            width: 100%;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        h2 {
+            text-align: center;
+            color: #0d6efd;
+            margin-bottom: 8px;
+        }
+        p.subtitle {
+            text-align: center;
+            color: #6c757d;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 8px;
+        }
+        textarea {
+            width: 100%;
+            height: 180px;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            margin-bottom: 15px;
+            font-size: 15px;
+            resize: vertical;
+        }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            background-color: #0d6efd;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 15px;
+            transition: 0.2s;
+        }
+        button:hover {
+            background-color: #0b5ed7;
+        }
+        .clear-btn {
+            background-color: #dc3545;
+        }
+        .clear-btn:hover {
+            background-color: #bb2d3b;
+        }
+        .result-box {
+            background: #e7f1ff;
+            border-left: 5px solid #0d6efd;
+            padding: 15px;
+            border-radius: 6px;
+            display: none;
+        }
+        .result-box h3 {
+            color: #0a58ca;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        .bullet-point {
+            margin-bottom: 6px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>⚡ Smart Notification Summarizer</h2>
+    <p class="subtitle">Bina kisi API key ke — Bade Sarkari Notification/Rules ko 30-Second me samjho!</p>
+
+    <label for="inputText">Bada Text / Official Notice Yahan Paste Karein:</label>
+    <textarea id="inputText" placeholder="Yahan Sarkari notice, PDF ka text ya koi bhi lamba paragraph paste karein..."></textarea>
+
+    <div class="btn-group">
+        <button onclick="smartSummarize()">⚡ Chote Shabdo Me Samjho</button>
+        <button class="clear-btn" onclick="clearText()">Clear</button>
+    </div>
+
+    <div class="result-box" id="resultBox">
+        <h3>📌 Main Highlights (Key Points):</h3>
+        <div id="outputText"></div>
+    </div>
+</div>
+
+<script>
+function smartSummarize() {
+    const text = document.getElementById('inputText').value.trim();
+    const resultBox = document.getElementById('resultBox');
+    const outputText = document.getElementById('outputText');
+
+    if (!text) {
+        alert("Pehle text paste toh karein!");
+        return;
+    }
+
+    // Smart Extraction Algorithm (Extracts key lines, dates, numbers, and main points)
+    const sentences = text.split(/(?<=[.?!।\n])/g);
+    let keySentences = [];
+
+    // Keywords to filter important lines in job/admission alerts
+    const priorityKeywords = ["date", "last date", "apply", "eligibility", "age", "fee", "payscale", "qualification", "post", "bihar", "admission", "board", "result", "rupees", "rs", "online", "official"];
+
+    sentences.forEach(sentence => {
+        let cleanSentence = sentence.trim();
+        if (cleanSentence.length > 20) {
+            let lower = cleanSentence.toLowerCase();
+            let isImportant = priorityKeywords.some(keyword => lower.includes(keyword));
+            if (isImportant || keySentences.length < 3) {
+                keySentences.push(cleanSentence);
+            }
+        }
+    });
+
+    // Limit to top 4-5 key points
+    let finalPoints = keySentences.slice(0, 5);
+
+    if (finalPoints.length === 0) {
+        finalPoints = sentences.slice(0, 3);
+    }
+
+    let htmlOutput = "";
+    finalPoints.forEach(point => {
+        htmlOutput += `<div class="bullet-point">🔹 ${point}</div>`;
+    });
+
+    outputText.innerHTML = htmlOutput;
+    resultBox.style.display = "block";
+}
+
+function clearText() {
+    document.getElementById('inputText').value = "";
+    document.getElementById('resultBox').style.display = "none";
+}
+</script>
+
+</body>
+</html>
