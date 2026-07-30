@@ -169,4 +169,172 @@ function clearText() {
 </script>
 
 </body>
+</html><!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sarkari Info - Real AI Summarizer</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            max-width: 650px;
+            width: 100%;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+        h2 {
+            color: #38bdf8;
+            font-size: 22px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        p.sub {
+            color: #94a3b8;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 160px;
+            background: #0f172a;
+            border: 1px solid #475569;
+            color: #f1f5f9;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 14px;
+            resize: vertical;
+            outline: none;
+        }
+        textarea:focus {
+            border-color: #38bdf8;
+        }
+        button {
+            width: 100%;
+            margin-top: 15px;
+            padding: 12px;
+            background: linear-gradient(135deg, #0284c7, #2563eb);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        .status {
+            margin-top: 15px;
+            font-size: 13px;
+            color: #fbbf24;
+            display: none;
+            text-align: center;
+        }
+        .result {
+            margin-top: 20px;
+            background: #0284c715;
+            border: 1px solid #0284c750;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+        }
+        .result h3 {
+            color: #38bdf8;
+            font-size: 15px;
+            margin-bottom: 8px;
+        }
+        .result p {
+            color: #e2e8f0;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+    </style>
+
+    <script type="module">
+        import { pipeline } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2';
+        window.pipeline = pipeline;
+    </script>
+</head>
+<body>
+
+<div class="card">
+    <h2>⚡ Real AI Text Summarizer</h2>
+    <p class="sub">Bina kisi API key ke — Local AI Model se text chota karein.</p>
+
+    <textarea id="textInput" placeholder="Koi bhi lamba text ya article yahan paste karein..."></textarea>
+    
+    <button id="sumBtn" onclick="runAI()">🤖 AI Summarize Karein</button>
+    
+    <div class="status" id="statusBox">⏳ Local AI Engine Init ho raha hai... (Pehli baar 10-15 sec lag sakte hain)</div>
+
+    <div class="result" id="resultBox">
+        <h3>📌 AI Generated Summary:</h3>
+        <p id="output"></p>
+    </div>
+</div>
+
+<script>
+    let summarizer = null;
+
+    async function runAI() {
+        const text = document.getElementById('textInput').value.trim();
+        const statusBox = document.getElementById('statusBox');
+        const resultBox = document.getElementById('resultBox');
+        const output = document.getElementById('output');
+
+        if (!text) {
+            alert("Kripya pehle text paste karein!");
+            return;
+        }
+
+        statusBox.style.display = "block";
+        resultBox.style.display = "none";
+
+        try {
+            // Load the lightweight Xenova/distilbart model directly in browser
+            if (!summarizer) {
+                statusBox.innerText = "🔄 HuggingFace Local Model load ho raha hai...";
+                summarizer = await window.pipeline('summarization', 'Xenova/distilbart-cnn-6-6');
+            }
+
+            statusBox.innerText = "🤖 AI Text Summarize kar raha hai...";
+            
+            const res = await summarizer(text, {
+                max_length: 60,
+                min_length: 20
+            });
+
+            output.innerText = res[0].summary_text;
+            resultBox.style.display = "block";
+            statusBox.style.display = "none";
+        } catch (err) {
+            statusBox.innerText = "❌ Exception aya, please dobara try karein.";
+            console.error(err);
+        }
+    }
+</script>
+
+</body>
 </html>
+
