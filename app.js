@@ -63,9 +63,19 @@ function switchRoom(roomId) {
   document.getElementById('activeChatTitle').textContent = roomInfo.name;
   document.getElementById('chatAvatar').textContent = roomInfo.tag;
   
+  // Mobile screen par chat select karte hi contact list hide karein
+  if (window.innerWidth < 768) {
+    document.getElementById('sidebarPane').classList.add('hidden');
+  }
+
   renderContacts();
   loadMessages();
   document.getElementById('msgInput').focus();
+}
+
+function goBackToChats() {
+  // Mobile par wapas contacts list dikhane ke liye
+  document.getElementById('sidebarPane').classList.remove('hidden');
 }
 
 function loadMessages() {
@@ -127,4 +137,3 @@ syncChannel.onmessage = (event) => {
 };
 
 window.onload = init;
-
