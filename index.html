@@ -1,340 +1,53 @@
-
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sarkari Info - Quick Text Summarizer</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            background-color: #f0f4f8;
-            color: #333;
-            display: flex;
-            justify-content: center;
-            padding: 20px;
-        }
-        .container {
-            background: #ffffff;
-            max-width: 700px;
-            width: 100%;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-        }
-        h2 {
-            text-align: center;
-            color: #0d6efd;
-            margin-bottom: 8px;
-        }
-        p.subtitle {
-            text-align: center;
-            color: #6c757d;
-            margin-bottom: 20px;
-            font-size: 14px;
-        }
-        label {
-            font-weight: 600;
-            display: block;
-            margin-bottom: 8px;
-        }
-        textarea {
-            width: 100%;
-            height: 180px;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #ced4da;
-            margin-bottom: 15px;
-            font-size: 15px;
-            resize: vertical;
-        }
-        .btn-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        button {
-            flex: 1;
-            padding: 12px;
-            border-radius: 8px;
-            border: none;
-            background-color: #0d6efd;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 15px;
-            transition: 0.2s;
-        }
-        button:hover {
-            background-color: #0b5ed7;
-        }
-        .clear-btn {
-            background-color: #dc3545;
-        }
-        .clear-btn:hover {
-            background-color: #bb2d3b;
-        }
-        .result-box {
-            background: #e7f1ff;
-            border-left: 5px solid #0d6efd;
-            padding: 15px;
-            border-radius: 6px;
-            display: none;
-        }
-        .result-box h3 {
-            color: #0a58ca;
-            margin-bottom: 8px;
-            font-size: 16px;
-        }
-        .bullet-point {
-            margin-bottom: 6px;
-            line-height: 1.5;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WhatsApp Web</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/socket.io/socket.io.js"></script>
 </head>
-<body>
+<body class="bg-[#111b21] text-[#e9edef] h-screen w-screen flex items-center justify-center m-0 font-sans overflow-hidden">
 
-<div class="container">
-    <h2>⚡ Smart Notification Summarizer</h2>
-    <p class="subtitle">Bina kisi API key ke — Bade Sarkari Notification/Rules ko 30-Second me samjho!</p>
+  <!-- Login Modal -->
+  <div id="authBox" class="bg-[#202c33] p-6 rounded-xl w-80 text-center shadow-2xl border border-[#222d34]">
+    <div class="w-16 h-16 bg-[#00a884] rounded-full flex items-center justify-center mx-auto mb-4 font-bold text-2xl text-white">W</div>
+    <h2 class="text-xl font-bold mb-4 text-[#e9edef]">WhatsApp Web</h2>
+    <input id="usernameInput" type="text" placeholder="Apna username daalein..." class="w-full p-2.5 rounded-lg bg-[#2a3942] text-white outline-none mb-4 text-sm placeholder-[#8696a0]" />
+    <button onclick="login()" class="w-full bg-[#00a884] text-white py-2.5 rounded-lg font-semibold hover:bg-[#02906f] transition">Continue</button>
+  </div>
 
-    <label for="inputText">Bada Text / Official Notice Yahan Paste Karein:</label>
-    <textarea id="inputText" placeholder="Yahan Sarkari notice, PDF ka text ya koi bhi lamba paragraph paste karein..."></textarea>
-
-    <div class="btn-group">
-        <button onclick="smartSummarize()">⚡ Chote Shabdo Me Samjho</button>
-        <button class="clear-btn" onclick="clearText()">Clear</button>
+  <!-- Main Chat Window -->
+  <div id="appContainer" class="hidden w-full h-full flex">
+    <!-- Left Sidebar -->
+    <div class="w-1/3 min-w-[300px] max-w-[400px] border-r border-[#222d34] flex flex-col bg-[#111b21]">
+      <div class="h-16 bg-[#202c33] px-4 flex items-center justify-between border-b border-[#222d34]">
+        <div class="flex items-center gap-3">
+          <div id="myAvatar" class="w-10 h-10 rounded-full bg-[#00a884] flex items-center justify-center font-bold text-white uppercase"></div>
+          <span id="myProfile" class="font-semibold text-sm capitalize"></span>
+        </div>
+        <button onclick="location.reload()" class="text-xs text-[#8696a0] hover:text-red-400">Logout</button>
+      </div>
+      <div id="usersList" class="flex-1 overflow-y-auto divide-y divide-[#222d34]"></div>
     </div>
 
-    <div class="result-box" id="resultBox">
-        <h3>📌 Main Highlights (Key Points):</h3>
-        <div id="outputText"></div>
+    <!-- Right Chat Area -->
+    <div class="flex-1 flex flex-col bg-[#0b141a]">
+      <div class="h-16 bg-[#202c33] px-4 flex items-center border-b border-[#222d34]">
+        <div id="chatAvatar" class="hidden w-10 h-10 rounded-full bg-[#6b7b84] flex items-center justify-center font-bold text-white mr-3 uppercase"></div>
+        <div>
+          <h3 id="chatTargetName" class="font-semibold text-sm">Select a user to chat</h3>
+          <span id="chatTargetStatus" class="text-xs text-[#8696a0]"></span>
+        </div>
+      </div>
+      <div id="messagePane" class="flex-1 p-4 overflow-y-auto space-y-2 flex flex-col"></div>
+      <form id="chatForm" onsubmit="sendMessage(event)" class="h-16 bg-[#202c33] px-4 flex items-center gap-2">
+        <input id="msgInput" type="text" placeholder="Type a message" class="flex-1 bg-[#2a3942] px-4 py-2 rounded-lg text-sm outline-none text-[#d1d7db] placeholder-[#8696a0]" disabled />
+        <button type="submit" class="bg-[#00a884] text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-[#02906f]">Send</button>
+      </form>
     </div>
-</div>
+  </div>
 
-<script>
-function smartSummarize() {
-    const text = document.getElementById('inputText').value.trim();
-    const resultBox = document.getElementById('resultBox');
-    const outputText = document.getElementById('outputText');
-
-    if (!text) {
-        alert("Pehle text paste toh karein!");
-        return;
-    }
-
-    // Smart Extraction Algorithm (Extracts key lines, dates, numbers, and main points)
-    const sentences = text.split(/(?<=[.?!।\n])/g);
-    let keySentences = [];
-
-    // Keywords to filter important lines in job/admission alerts
-    const priorityKeywords = ["date", "last date", "apply", "eligibility", "age", "fee", "payscale", "qualification", "post", "bihar", "admission", "board", "result", "rupees", "rs", "online", "official"];
-
-    sentences.forEach(sentence => {
-        let cleanSentence = sentence.trim();
-        if (cleanSentence.length > 20) {
-            let lower = cleanSentence.toLowerCase();
-            let isImportant = priorityKeywords.some(keyword => lower.includes(keyword));
-            if (isImportant || keySentences.length < 3) {
-                keySentences.push(cleanSentence);
-            }
-        }
-    });
-
-    // Limit to top 4-5 key points
-    let finalPoints = keySentences.slice(0, 5);
-
-    if (finalPoints.length === 0) {
-        finalPoints = sentences.slice(0, 3);
-    }
-
-    let htmlOutput = "";
-    finalPoints.forEach(point => {
-        htmlOutput += `<div class="bullet-point">🔹 ${point}</div>`;
-    });
-
-    outputText.innerHTML = htmlOutput;
-    resultBox.style.display = "block";
-}
-
-function clearText() {
-    document.getElementById('inputText').value = "";
-    document.getElementById('resultBox').style.display = "none";
-}
-</script>
-
-</body>
-</html><!DOCTYPE html>
-<html lang="hi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sarkari Info - Real AI Summarizer</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            background-color: #0f172a;
-            color: #f8fafc;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .card {
-            background: #1e293b;
-            border: 1px solid #334155;
-            max-width: 650px;
-            width: 100%;
-            padding: 25px;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-        }
-        h2 {
-            color: #38bdf8;
-            font-size: 22px;
-            margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        p.sub {
-            color: #94a3b8;
-            font-size: 13px;
-            margin-bottom: 20px;
-        }
-        textarea {
-            width: 100%;
-            height: 160px;
-            background: #0f172a;
-            border: 1px solid #475569;
-            color: #f1f5f9;
-            padding: 12px;
-            border-radius: 10px;
-            font-size: 14px;
-            resize: vertical;
-            outline: none;
-        }
-        textarea:focus {
-            border-color: #38bdf8;
-        }
-        button {
-            width: 100%;
-            margin-top: 15px;
-            padding: 12px;
-            background: linear-gradient(135deg, #0284c7, #2563eb);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        button:hover {
-            opacity: 0.9;
-        }
-        .status {
-            margin-top: 15px;
-            font-size: 13px;
-            color: #fbbf24;
-            display: none;
-            text-align: center;
-        }
-        .result {
-            margin-top: 20px;
-            background: #0284c715;
-            border: 1px solid #0284c750;
-            padding: 15px;
-            border-radius: 10px;
-            display: none;
-        }
-        .result h3 {
-            color: #38bdf8;
-            font-size: 15px;
-            margin-bottom: 8px;
-        }
-        .result p {
-            color: #e2e8f0;
-            font-size: 14px;
-            line-height: 1.6;
-        }
-    </style>
-
-    <script type="module">
-        import { pipeline } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2';
-        window.pipeline = pipeline;
-    </script>
-</head>
-<body>
-
-<div class="card">
-    <h2>⚡ Real AI Text Summarizer</h2>
-    <p class="sub">Bina kisi API key ke — Local AI Model se text chota karein.</p>
-
-    <textarea id="textInput" placeholder="Koi bhi lamba text ya article yahan paste karein..."></textarea>
-    
-    <button id="sumBtn" onclick="runAI()">🤖 AI Summarize Karein</button>
-    
-    <div class="status" id="statusBox">⏳ Local AI Engine Init ho raha hai... (Pehli baar 10-15 sec lag sakte hain)</div>
-
-    <div class="result" id="resultBox">
-        <h3>📌 AI Generated Summary:</h3>
-        <p id="output"></p>
-    </div>
-</div>
-
-<script>
-    let summarizer = null;
-
-    async function runAI() {
-        const text = document.getElementById('textInput').value.trim();
-        const statusBox = document.getElementById('statusBox');
-        const resultBox = document.getElementById('resultBox');
-        const output = document.getElementById('output');
-
-        if (!text) {
-            alert("Kripya pehle text paste karein!");
-            return;
-        }
-
-        statusBox.style.display = "block";
-        resultBox.style.display = "none";
-
-        try {
-            // Load the lightweight Xenova/distilbart model directly in browser
-            if (!summarizer) {
-                statusBox.innerText = "🔄 HuggingFace Local Model load ho raha hai...";
-                summarizer = await window.pipeline('summarization', 'Xenova/distilbart-cnn-6-6');
-            }
-
-            statusBox.innerText = "🤖 AI Text Summarize kar raha hai...";
-            
-            const res = await summarizer(text, {
-                max_length: 60,
-                min_length: 20
-            });
-
-            output.innerText = res[0].summary_text;
-            resultBox.style.display = "block";
-            statusBox.style.display = "none";
-        } catch (err) {
-            statusBox.innerText = "❌ Exception aya, please dobara try karein.";
-            console.error(err);
-        }
-    }
-</script>
-
+  <script src="app.js"></script>
 </body>
 </html>
-
