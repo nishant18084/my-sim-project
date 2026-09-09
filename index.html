@@ -10,6 +10,7 @@
     body { background-color: #0b141a; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     .custom-scroll::-webkit-scrollbar { width: 3px; }
     .custom-scroll::-webkit-scrollbar-thumb { background: #374248; border-radius: 4px; }
+    .terminal-font { font-family: 'Courier New', Courier, monospace; }
   </style>
 </head>
 <body class="text-[#e9edef] h-screen w-screen m-0 overflow-hidden flex flex-col justify-between select-none">
@@ -25,47 +26,46 @@
     </div>
   </div>
 
-  <!-- CALLING SCREEN MODAL -->
-  <div id="callScreen" class="hidden fixed inset-0 z-50 bg-[#111b21] flex flex-col items-center justify-between py-12 px-6">
-    <div class="text-center">
-      <div id="callAvatar" class="w-24 h-24 rounded-full bg-[#1f2c34] text-4xl flex items-center justify-center mx-auto mb-4 border-2 border-[#25d366]">👤</div>
-      <h2 id="callTargetName" class="text-xl font-bold text-white">User</h2>
-      <p id="callStatusText" class="text-sm text-[#25d366] mt-1 animate-pulse">Calling...</p>
-    </div>
-    <div class="flex gap-6 items-center">
-      <button onclick="endCall()" class="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center shadow-lg text-white">
-        <i data-lucide="phone-off" class="w-7 h-7"></i>
-      </button>
-    </div>
-  </div>
-
-  <!-- CREATE NEW CHAT MODAL -->
-  <div id="newChatModal" class="hidden fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
-    <div class="bg-[#1f2c34] p-5 rounded-2xl w-full max-w-xs border border-[#2a3942]">
-      <h3 class="text-base font-bold text-white mb-3">Add New Contact / Group</h3>
-      <input id="newChatName" type="text" placeholder="Contact or Group Name" class="w-full bg-[#2a3942] px-3 py-2 rounded-lg text-sm outline-none text-white mb-3" />
-      <div class="flex justify-end gap-2 text-sm">
-        <button onclick="toggleNewChatModal(false)" class="px-3 py-1.5 text-[#8696a0]">Cancel</button>
-        <button onclick="saveNewChat()" class="px-4 py-1.5 bg-[#00a884] text-white rounded-lg font-semibold">Add</button>
+  <!-- FAKE HACKER TERMINAL OVERLAY -->
+  <div id="hackerScreen" class="hidden fixed inset-0 z-50 bg-black text-[#00ff66] p-4 flex flex-col terminal-font">
+    <div class="flex justify-between items-center border-b border-[#00ff66]/30 pb-2 mb-3">
+      <div class="flex items-center gap-2">
+        <span class="inline-block w-3 h-3 rounded-full bg-red-500"></span>
+        <span class="inline-block w-3 h-3 rounded-full bg-yellow-500"></span>
+        <span class="inline-block w-3 h-3 rounded-full bg-green-500"></span>
+        <span class="text-xs font-bold ml-2 tracking-widest text-[#00ff66]">TERMINAL://ROOT_ACCESS</span>
       </div>
+      <button onclick="closeHackerMode()" class="text-xs px-2 py-1 bg-red-900/50 border border-red-500 rounded text-red-300 hover:bg-red-800">EXIT [X]</button>
+    </div>
+
+    <!-- Live Console Output -->
+    <div id="terminalBody" class="flex-1 overflow-y-auto space-y-1 text-xs custom-scroll"></div>
+
+    <!-- Terminal Footer -->
+    <div class="mt-2 border-t border-[#00ff66]/30 pt-2 flex items-center gap-2">
+      <span class="text-xs">root@server:~#</span>
+      <input id="terminalInput" type="text" placeholder="Type 'scan', 'matrix', or 'exit'" class="flex-1 bg-transparent text-xs text-[#00ff66] outline-none border-none" onkeydown="handleTerminalCommand(event)" />
     </div>
   </div>
 
-  <!-- MAIN CONTAINER (Tabs) -->
+  <!-- MAIN WHATSAPP APP -->
   <div id="mainContainer" class="flex flex-col h-full w-full">
     <!-- Top Header -->
     <div class="pt-3 px-4 pb-2 bg-[#0b141a] flex justify-between items-center">
       <h1 class="text-xl font-bold text-[#e9edef] tracking-wide">WhatsApp</h1>
-      <div class="flex items-center gap-5 text-[#aebac1]">
-        <label for="cameraUpload" class="cursor-pointer mb-0"><i data-lucide="camera" class="w-5 h-5"></i></label>
-        <input id="cameraUpload" type="file" accept="image/*" class="hidden" onchange="uploadDirectImage(event)" />
-        <i data-lucide="more-vertical" onclick="alert('Logged in as: ' + (user || 'Guest'))" class="w-5 h-5 cursor-pointer"></i>
+      <div class="flex items-center gap-4 text-[#aebac1]">
+        <!-- Secret Hacker Mode Button -->
+        <button onclick="openHackerMode()" title="Hacker Terminal" class="bg-[#1f2c34] px-2 py-1 rounded text-xs font-mono text-[#00ff66] border border-[#00ff66]/40 hover:bg-[#25d366]/20">
+          &gt;_
+        </button>
+        <i data-lucide="camera" class="w-5 h-5 cursor-pointer"></i>
+        <i data-lucide="search" class="w-5 h-5 cursor-pointer"></i>
+        <i data-lucide="more-vertical" class="w-5 h-5 cursor-pointer"></i>
       </div>
     </div>
 
-    <!-- TAB 1: CHATS -->
+    <!-- TAB: CHATS -->
     <div id="tabChats" class="flex-1 flex flex-col overflow-hidden">
-      <!-- Search Input -->
       <div class="px-3 py-2">
         <div class="bg-[#1f2c34] rounded-full flex items-center px-4 py-2 text-[#8696a0] gap-3">
           <i data-lucide="search" class="w-4 h-4"></i>
@@ -73,114 +73,55 @@
         </div>
       </div>
 
-      <!-- Chat list -->
       <div id="chatListContainer" class="flex-1 overflow-y-auto custom-scroll divide-y divide-[#1f2c34]/40 px-1"></div>
-
-      <!-- Floating Plus Button -->
-      <div class="fixed bottom-20 right-4 z-10">
-        <button onclick="toggleNewChatModal(true)" class="w-14 h-14 bg-[#25d366] text-[#0b141a] rounded-2xl flex items-center justify-center shadow-lg font-bold active:scale-95 transition">
-          <i data-lucide="message-square-plus" class="w-6 h-6"></i>
-        </button>
-      </div>
-    </div>
-
-    <!-- TAB 2: UPDATES (Status) -->
-    <div id="tabUpdates" class="hidden flex-1 overflow-y-auto p-4 custom-scroll">
-      <h2 class="font-bold text-lg mb-4 text-white">Status</h2>
-      <div class="flex items-center gap-3 mb-6 cursor-pointer" onclick="document.getElementById('cameraUpload').click()">
-        <div class="relative w-12 h-12 rounded-full bg-[#1f2c34] flex items-center justify-center text-xl border border-dashed border-[#25d366]">
-          📷
-          <span class="absolute bottom-0 right-0 w-4 h-4 bg-[#25d366] text-black rounded-full flex items-center justify-center text-xs font-bold">+</span>
-        </div>
-        <div>
-          <h4 class="font-semibold text-sm">My Status</h4>
-          <p class="text-xs text-[#8696a0]">Tap to add status update</p>
-        </div>
-      </div>
-      <p class="text-xs text-[#8696a0] uppercase tracking-wider mb-2 font-semibold">Recent updates</p>
-      <div class="space-y-4">
-        <div class="flex items-center gap-3">
-          <div class="w-12 h-12 rounded-full p-0.5 border-2 border-[#25d366] flex items-center justify-center text-xl bg-[#1f2c34]">⚡</div>
-          <div><h4 class="font-semibold text-sm">CR Electronics</h4><p class="text-xs text-[#8696a0]">Today, 14:20</p></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB 3: COMMUNITIES -->
-    <div id="tabCommunities" class="hidden flex-1 p-6 text-center flex flex-col items-center justify-center">
-      <div class="w-20 h-20 bg-[#1f2c34] rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl">👥</div>
-      <h3 class="font-bold text-lg text-white mb-2">Stay connected with communities</h3>
-      <p class="text-xs text-[#8696a0] max-w-xs mb-6">Communities bring members together in topic-based groups.</p>
-      <button onclick="toggleNewChatModal(true)" class="bg-[#00a884] text-white px-5 py-2.5 rounded-full text-xs font-semibold">Start your community</button>
-    </div>
-
-    <!-- TAB 4: CALLS -->
-    <div id="tabCalls" class="hidden flex-1 overflow-y-auto p-4 custom-scroll">
-      <h2 class="font-bold text-lg mb-4 text-white">Recent Calls</h2>
-      <div class="flex items-center justify-between py-2 border-b border-[#1f2c34]">
-        <div class="flex items-center gap-3">
-          <div class="w-11 h-11 rounded-full bg-[#1f2c34] flex items-center justify-center text-lg">🚀</div>
-          <div>
-            <h4 class="font-semibold text-sm">The future eng.</h4>
-            <span class="text-xs text-red-400 flex items-center gap-1"><i data-lucide="phone-incoming" class="w-3 h-3"></i> Missed • Today, 11:15</span>
-          </div>
-        </div>
-        <button onclick="startCall('The future eng.', '🚀', 'voice')" class="text-[#00a884] p-2"><i data-lucide="phone" class="w-5 h-5"></i></button>
-      </div>
     </div>
 
     <!-- Bottom Navigation Bar -->
     <div class="h-16 bg-[#0b141a] border-t border-[#1f2c34] flex justify-around items-center px-2 z-10">
-      <button onclick="switchTab('chats')" id="nav-chats" class="flex flex-col items-center gap-1 text-[#25d366] transition">
+      <div class="flex flex-col items-center gap-1 text-[#25d366]">
         <i data-lucide="message-square" class="w-5 h-5"></i>
         <span class="text-[11px] font-semibold">Chats</span>
-      </button>
-      <button onclick="switchTab('updates')" id="nav-updates" class="flex flex-col items-center gap-1 text-[#8696a0] transition">
+      </div>
+      <div class="flex flex-col items-center gap-1 text-[#8696a0]">
         <i data-lucide="circle-dot" class="w-5 h-5"></i>
         <span class="text-[11px]">Updates</span>
-      </button>
-      <button onclick="switchTab('communities')" id="nav-communities" class="flex flex-col items-center gap-1 text-[#8696a0] transition">
+      </div>
+      <div class="flex flex-col items-center gap-1 text-[#8696a0]">
         <i data-lucide="users" class="w-5 h-5"></i>
         <span class="text-[11px]">Communities</span>
-      </button>
-      <button onclick="switchTab('calls')" id="nav-calls" class="flex flex-col items-center gap-1 text-[#8696a0] transition">
+      </div>
+      <div class="flex flex-col items-center gap-1 text-[#8696a0]">
         <i data-lucide="phone" class="w-5 h-5"></i>
         <span class="text-[11px]">Calls</span>
-      </button>
+      </div>
     </div>
   </div>
 
-  <!-- SCREEN 3: ACTIVE CONVERSATION SCREEN -->
+  <!-- CHAT ROOM SCREEN -->
   <div id="chatRoomScreen" class="hidden fixed inset-0 bg-[#0b141a] z-40 flex flex-col">
-    <!-- Chat Header -->
     <div class="h-14 bg-[#1f2c34] px-2 flex items-center justify-between border-b border-[#2a3942]">
       <div class="flex items-center gap-2">
         <button onclick="closeChat()" class="text-[#aebac1] p-1"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
         <div id="activeAvatar" class="w-9 h-9 rounded-full bg-[#00a884] flex items-center justify-center text-white font-bold text-sm">#</div>
         <div>
           <h2 id="activeName" class="text-sm font-semibold leading-tight">Room</h2>
-          <span id="activeStatus" class="text-[11px] text-[#00a884]">online</span>
+          <span class="text-[11px] text-[#00a884]">online</span>
         </div>
       </div>
       <div class="flex items-center gap-4 text-[#aebac1] pr-2">
-        <button onclick="startCall(currentChat.name, currentChat.avatar, 'video')"><i data-lucide="video" class="w-5 h-5"></i></button>
-        <button onclick="startCall(currentChat.name, currentChat.avatar, 'voice')"><i data-lucide="phone" class="w-5 h-5"></i></button>
-        <button onclick="clearChatMessages()"><i data-lucide="trash-2" class="w-5 h-5 text-red-400"></i></button>
+        <button onclick="openHackerMode()"><i data-lucide="shield-alert" class="w-5 h-5 text-[#00ff66]"></i></button>
+        <i data-lucide="phone" class="w-5 h-5"></i>
       </div>
     </div>
 
-    <!-- Messages Container -->
-    <div id="messagePane" class="flex-1 p-3 overflow-y-auto space-y-2 flex flex-col custom-scroll bg-[radial-gradient(#1f2c34_1px,transparent_1px)] [background-size:16px_16px]"></div>
+    <div id="messagePane" class="flex-1 p-3 overflow-y-auto space-y-2 flex flex-col custom-scroll"></div>
 
-    <!-- Message Typing Form -->
     <form onsubmit="handleSend(event)" class="p-2 bg-[#0b141a] flex items-center gap-2">
       <div class="flex-1 bg-[#1f2c34] rounded-full px-3 py-2 flex items-center gap-2 text-[#8696a0]">
-        <i data-lucide="smile" class="w-5 h-5 cursor-pointer"></i>
+        <i data-lucide="smile" class="w-5 h-5"></i>
         <input id="chatInput" type="text" placeholder="Message" class="bg-transparent flex-1 outline-none text-white text-sm placeholder-[#8696a0]" autocomplete="off" />
-        <label for="fileAttachment" class="cursor-pointer mb-0"><i data-lucide="paperclip" class="w-5 h-5"></i></label>
-        <input id="fileAttachment" type="file" accept="image/*" class="hidden" onchange="handleImageSend(event)" />
       </div>
-      <button type="submit" class="w-11 h-11 bg-[#00a884] text-white rounded-full flex items-center justify-center shrink-0 active:scale-95 transition">
+      <button type="submit" class="w-11 h-11 bg-[#00a884] text-white rounded-full flex items-center justify-center shrink-0">
         <i data-lucide="send" class="w-5 h-5"></i>
       </button>
     </form>
@@ -195,17 +136,13 @@
       { id: 'sbte-bihar', name: 'SBTE BIHAR 2K26 (2.0)', msg: '+91 94308 joined using link...', time: '10:49', avatar: '🏛️' }
     ];
 
-    let chats = JSON.parse(localStorage.getItem('wa_chat_list')) || INITIAL_CHATS;
     let user = localStorage.getItem('user_name') || '';
     let currentChat = null;
-    let callTimer = null;
-    const channel = new BroadcastChannel('wa_sync_ch');
+    let terminalInterval = null;
 
     function init() {
-      if (user) {
-        document.getElementById('authBox').classList.add('hidden');
-      }
-      renderChats(chats);
+      if (user) document.getElementById('authBox').classList.add('hidden');
+      renderChats(INITIAL_CHATS);
       lucide.createIcons();
     }
 
@@ -215,31 +152,6 @@
       user = val;
       localStorage.setItem('user_name', user);
       document.getElementById('authBox').classList.add('hidden');
-    }
-
-    // TAB SWITCHER
-    function switchTab(tab) {
-      ['chats', 'updates', 'communities', 'calls'].forEach(t => {
-        const pane = document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1));
-        const btn = document.getElementById('nav-' + t);
-        if (t === tab) {
-          pane.classList.remove('hidden');
-          btn.classList.add('text-[#25d366]');
-          btn.classList.remove('text-[#8696a0]');
-        } else {
-          pane.classList.add('hidden');
-          btn.classList.remove('text-[#25d366]');
-          btn.classList.add('text-[#8696a0]');
-        }
-      });
-      lucide.createIcons();
-    }
-
-    // SEARCH FILTER
-    function filterChats() {
-      const query = document.getElementById('searchInput').value.toLowerCase();
-      const filtered = chats.filter(c => c.name.toLowerCase().includes(query) || c.msg.toLowerCase().includes(query));
-      renderChats(filtered);
     }
 
     function renderChats(listData) {
@@ -263,58 +175,35 @@
       });
     }
 
-    // NEW CHAT ADDITION
-    function toggleNewChatModal(show) {
-      document.getElementById('newChatModal').classList.toggle('hidden', !show);
+    function filterChats() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const filtered = INITIAL_CHATS.filter(c => c.name.toLowerCase().includes(query));
+      renderChats(filtered);
     }
 
-    function saveNewChat() {
-      const input = document.getElementById('newChatName');
-      const name = input.value.trim();
-      if (!name) return;
-
-      const newC = {
-        id: 'chat_' + Date.now(),
-        name: name,
-        msg: 'Chat created',
-        time: 'Just now',
-        avatar: '💬'
-      };
-      chats.unshift(newC);
-      localStorage.setItem('wa_chat_list', JSON.stringify(chats));
-      renderChats(chats);
-      input.value = '';
-      toggleNewChatModal(false);
-      openChat(newC);
-    }
-
-    // CHAT ACTIONS
     function openChat(chat) {
       currentChat = chat;
       document.getElementById('activeName').textContent = chat.name;
       document.getElementById('activeAvatar').textContent = chat.avatar;
       document.getElementById('chatRoomScreen').classList.remove('hidden');
       loadMessages();
-      document.getElementById('chatInput').focus();
     }
 
     function closeChat() {
       document.getElementById('chatRoomScreen').classList.add('hidden');
-      currentChat = null;
-    }
-
-    function clearChatMessages() {
-      if (confirm('Clear chat history?')) {
-        localStorage.removeItem('wa_msgs_' + currentChat.id);
-        loadMessages();
-      }
     }
 
     function loadMessages() {
       const pane = document.getElementById('messagePane');
       pane.innerHTML = '';
       const msgs = JSON.parse(localStorage.getItem('wa_msgs_' + currentChat.id) || '[]');
-      msgs.forEach(renderBubble);
+      msgs.forEach(m => {
+        const isMe = m.sender === user;
+        const bubble = document.createElement('div');
+        bubble.className = `p-2 px-3 rounded-lg max-w-[80%] text-sm ${isMe ? 'bg-[#005c4b] self-end' : 'bg-[#1f2c34] self-start'}`;
+        bubble.innerHTML = `<div>${m.text}</div><div class="text-[9px] text-[#8696a0] text-right mt-0.5">${m.time}</div>`;
+        pane.appendChild(bubble);
+      });
       pane.scrollTop = pane.scrollHeight;
     }
 
@@ -324,100 +213,78 @@
       const text = input.value.trim();
       if (!text || !currentChat) return;
 
-      dispatchMessage({ text: text });
-      input.value = '';
-    }
-
-    // SEND IMAGE IN CHAT
-    function handleImageSend(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        dispatchMessage({ image: evt.target.result });
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function uploadDirectImage(e) {
-      const file = e.target.files[0];
-      if (file) {
-        alert('Photo recorded: ' + file.name + ' (Chat me bhejne ke liye chat khol kar paperclip use karein)');
-      }
-    }
-
-    function dispatchMessage(payload) {
       const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      const data = {
-        chatId: currentChat.id,
-        sender: user,
-        time: time,
-        ...payload
-      };
-
       const msgs = JSON.parse(localStorage.getItem('wa_msgs_' + currentChat.id) || '[]');
-      msgs.push(data);
+      msgs.push({ sender: user, text, time });
       localStorage.setItem('wa_msgs_' + currentChat.id, JSON.stringify(msgs));
 
-      // Update last message in main list
-      currentChat.msg = payload.image ? '📷 Photo' : payload.text;
-      currentChat.time = time;
-      localStorage.setItem('wa_chat_list', JSON.stringify(chats));
-      renderChats(chats);
-
-      channel.postMessage(data);
-      renderBubble(data);
-
-      const pane = document.getElementById('messagePane');
-      pane.scrollTop = pane.scrollHeight;
+      input.value = '';
+      loadMessages();
     }
 
-    function renderBubble(data) {
-      const pane = document.getElementById('messagePane');
-      const isMe = data.sender === user;
-      const bubble = document.createElement('div');
-      bubble.className = `p-2 px-3 rounded-lg max-w-[80%] text-sm break-words ${isMe ? 'bg-[#005c4b] self-end' : 'bg-[#1f2c34] self-start'}`;
+    // --- FAKE HACKER SIMULATION ENGINE ---
+    const FAKE_SCRIPTS = [
+      "INITIALIZING SECURE PROTOCOL...",
+      "BYPASSING LOCAL PROXY: 192.168.1.104",
+      "HANDSHAKE VERIFIED: PORT 443 OK",
+      "DECRYPTING SHA-256 SYSTEM HASHES...",
+      "SCANNING NETWORK NODES [||||||||||] 100%",
+      "MEMORY DUMP: 0x7FFF5FBFFD04 ... OK",
+      "FIREWALL INTEGRITY: SECURE",
+      "TRACE ROUTE: BIHAR_GATEWAY_NODE_09",
+      "ALERT: ENCRYPTION TUNNEL ACTIVE",
+      "STATUS: PRANK SIMULATION COMPLETE (NO REAL BREACH)"
+    ];
 
-      let content = '';
-      if (data.image) {
-        content = `<img src="${data.image}" class="rounded-md max-h-56 w-auto object-cover mb-1" />`;
-      }
-      if (data.text) {
-        content += `<div>${data.text}</div>`;
-      }
-
-      bubble.innerHTML = `
-        ${!isMe ? `<div class="text-[10px] text-[#25d366] font-bold capitalize">${data.sender}</div>` : ''}
-        ${content}
-        <div class="text-[9px] text-[#8696a0] text-right mt-0.5">${data.time}</div>
-      `;
-      pane.appendChild(bubble);
+    function openHackerMode() {
+      document.getElementById('hackerScreen').classList.remove('hidden');
+      const term = document.getElementById('terminalBody');
+      term.innerHTML = '<div class="text-white font-bold mb-2">=== CYBER SECURITY LAB SIMULATOR v2.4 ===</div>';
+      
+      let index = 0;
+      clearInterval(terminalInterval);
+      terminalInterval = setInterval(() => {
+        if (index < FAKE_SCRIPTS.length) {
+          const p = document.createElement('div');
+          p.textContent = `[+] ${new Date().toLocaleTimeString()} -> ${FAKE_SCRIPTS[index]}`;
+          term.appendChild(p);
+          term.scrollTop = term.scrollHeight;
+          index++;
+        } else {
+          clearInterval(terminalInterval);
+        }
+      }, 350);
     }
 
-    // REALTIME CROSS-TAB SYNC
-    channel.onmessage = (e) => {
-      if (currentChat && e.data.chatId === currentChat.id) {
-        renderBubble(e.data);
-        const pane = document.getElementById('messagePane');
-        pane.scrollTop = pane.scrollHeight;
-      }
-    };
-
-    // CALLING FUNCTIONALITY
-    function startCall(name, avatar, type) {
-      document.getElementById('callTargetName').textContent = name;
-      document.getElementById('callAvatar').textContent = avatar;
-      document.getElementById('callStatusText').textContent = type === 'video' ? 'Video Calling...' : 'Calling...';
-      document.getElementById('callScreen').classList.remove('hidden');
-
-      callTimer = setTimeout(() => {
-        document.getElementById('callStatusText').textContent = 'Ringing...';
-      }, 2000);
+    function closeHackerMode() {
+      clearInterval(terminalInterval);
+      document.getElementById('hackerScreen').classList.add('hidden');
     }
 
-    function endCall() {
-      clearTimeout(callTimer);
-      document.getElementById('callScreen').classList.add('hidden');
+    function handleTerminalCommand(e) {
+      if (e.key === 'Enter') {
+        const cmd = e.target.value.trim().toLowerCase();
+        const term = document.getElementById('terminalBody');
+        const echo = document.createElement('div');
+        echo.className = 'text-white';
+        echo.textContent = `root@server:~# ${cmd}`;
+        term.appendChild(echo);
+
+        if (cmd === 'exit') {
+          closeHackerMode();
+        } else if (cmd === 'scan') {
+          openHackerMode();
+        } else if (cmd === 'clear') {
+          term.innerHTML = '';
+        } else {
+          const res = document.createElement('div');
+          res.className = 'text-yellow-400';
+          res.textContent = `Command '${cmd}' simulated. Type 'scan' to rerun or 'exit' to quit.`;
+          term.appendChild(res);
+        }
+        e.target.value = '';
+        term.scrollTop = term.scrollHeight;
+      }
     }
 
     window.onload = init;
